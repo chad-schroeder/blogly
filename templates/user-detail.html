@@ -5,8 +5,10 @@ block content %}
   <img class="mr-3" src="{{ user.image_url }}" alt="Generic placeholder image">
   <div class="media-body">
     <h1 class="mt-0 mb-2">{{ user.first_name }} {{ user.last_name }}</h1>
-    <button type="button" class="btn btn-primary mr-1">Edit</button>
-    <button type="button" class="btn btn-danger">Delete</button>
+    <form action="/users/{{ user.id }}/delete" method="POST">
+      <a class="btn btn-primary" href="/users/{{ user.id }}/edit" role="button">Edit</a>
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
   </div>
 </div>
 

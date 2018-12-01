@@ -32,8 +32,8 @@ def show_users():
     return render_template('/user-listing.html', users=users)
 
 
-@app.route('/users', methods=['POST'])
-def add_user_to_database():
+@app.route('/users/new', methods=['POST'])
+def add_user():
     """Add user to database."""
 
     first_name = request.form.get('first_name')
@@ -49,7 +49,7 @@ def add_user_to_database():
 
 
 @app.route('/users/new')
-def add_user_form():
+def new_user_form():
     """Form to add user."""
 
     return render_template('/user-add.html')
@@ -59,13 +59,40 @@ def add_user_form():
 def display_user(user_id):
     """Show user details."""
 
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     return render_template('/user-detail.html', user=user)
 
 
 @app.route('/users/<int:user_id>/edit')
-def edit_user(user_id):
+def edit_user_form(user_id):
     """Edit user details form."""
 
     user = User.query.get(user_id)
     return render_template('/user-edit.html', user=user)
+
+
+@app.route('/users/<int:user_id>/edit', methods=['POST'])
+def edit_user(user_id):
+    """Edit user details form."""
+
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    image_url = request.form.get('image_url', None)
+
+    user = User(
+        first_name=first_name, last_name=last_name, image_url=image_url)
+    db.session.add(user)
+    db.session.commit()
+
+    return redirect('/users', code=302)
+
+
+@app.route('/users/<int:user_id>/delete', methods=['POST'])
+def delete_user(user_id):
+    """Delete user from database."""
+
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect('/users', code=302)

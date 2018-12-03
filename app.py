@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, request, redirect, render_template
-from models import db, connect_db, User
+from models import db, connect_db, User, Post
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -32,7 +32,7 @@ def show_users():
     return render_template('/user-listing.html', users=users)
 
 
-@app.route('/users/new', methods=['POST'])
+@app.route('/users', methods=['POST'])
 def add_user():
     """Add user to database."""
 
@@ -60,7 +60,8 @@ def display_user(user_id):
     """Show user details."""
 
     user = User.query.get_or_404(user_id)
-    return render_template('/user-detail.html', user=user)
+    posts = user.posts
+    return render_template('/user-detail.html', user=user, posts=posts)
 
 
 @app.route('/users/<int:user_id>/edit')
@@ -75,12 +76,11 @@ def edit_user_form(user_id):
 def edit_user(user_id):
     """Edit user details form."""
 
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    image_url = request.form.get('image_url', None)
+    user = User.query.get_or_404(user_id)
+    user.first_name = request.form.get('first_name')
+    user.last_name = request.form.get('last_name')
+    user.image_url = request.form.get('image_url', None)
 
-    user = User(
-        first_name=first_name, last_name=last_name, image_url=image_url)
     db.session.add(user)
     db.session.commit()
 
@@ -96,3 +96,26 @@ def delete_user(user_id):
     db.session.commit()
 
     return redirect('/users', code=302)
+
+
+@app.route('/users/<int:user_id>/posts/new')
+def new_post_form(user_id):
+    """New post form."""
+
+    user = User.query.get_or_404(user_id)
+    return render_template('/posts-form.html', user=user)
+
+
+@app.route('/users/<int:user_id>/posts', methods=['POST'])
+def add_new_post(user_id):
+    """Add new post to database."""
+
+    user = User.query.get_or_404(user_id)
+    title = request.form.get('post_title')
+    content = request.form.get('post_content')
+
+    post = Post(title=title, content=content, user_id=user.id)
+    db.session.add(post)
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}', code=302)

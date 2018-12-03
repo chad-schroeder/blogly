@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% block title %} Edit Post {% endblock %} {%
-block content %}
+{% extends 'base.html' %} {% block title %} Edit Post {% endblock %} {% block
+content %}
 
 <h1>Edit Post</h1>
 
@@ -26,12 +26,15 @@ block content %}
         name="post_content"
         rows="3"
         required
-      >{{ post.content }}</textarea>
+      >{{ post.content }}</textarea
+      >
     </div>
   </div>
   <div class="d-flex justify-content-end">
-    <a class="btn btn-info" href="/posts/{{ post.id }}" role="button">Cancel</a>
-    <button type="submit" class="btn btn-success">Add</button>
+    <a class="btn btn-info mr-1" href="/posts/{{ post.id }}" role="button"
+      >Cancel</a
+    >
+    <button type="submit" class="btn btn-success">Edit</button>
   </div>
 </form>
 

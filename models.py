@@ -22,7 +22,7 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=True)
 
-    user = db.relationship("Post", backref="user")
+    posts = db.relationship("Post", backref="user")
 
     def __repr__(self):
         """Show info for user."""
@@ -39,12 +39,9 @@ class Post(db.Model):
     title = db.Column(db.Text, nullable=False, unique=True)
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    user_id = db.Column(
-        db.Integer, db.ForeignKey("users.id"), primary_key=True)
-
-    posts = db.relationship("User", backref="posts")
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     def __repr__(self):
         """Show info for user."""
 
-        return f"<Post id={self.id} Post title={self.title}, content={self.content}, created_at={self.created_at} user_id={self.user_id}>"
+        return f"<Post id={self.id}, Post title={self.title}, content={self.content}, created at={self.created_at} user_id={self.user_id}>"

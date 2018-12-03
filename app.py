@@ -119,3 +119,12 @@ def add_new_post(user_id):
     db.session.commit()
 
     return redirect(f'/users/{user_id}', code=302)
+
+
+@app.route('/posts/<int:post_id>')
+def show_a_post(post_id):
+    """Show an individual post"""
+
+    post = Post.query.get_or_404(post_id)
+    user = post.user
+    return render_template('post-details.html', post=post, user=user)

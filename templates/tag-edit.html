@@ -1,9 +1,9 @@
 {% extends 'base.html' %} {% block title %} Edit a tag {% endblock %} {%
 block content %}
 
-<h1>Create a Tag</h1>
+<h1>Edit a Tag</h1>
 
-<form action="/tags" method="POST">
+<form action="/tags/{{ tag.id }}/edit" method="POST">
   <div class="form-group row">
     <label for="post_title" class="col-sm-2 col-form-label">Name</label>
     <div class="col-sm-10">
@@ -20,7 +20,7 @@ block content %}
     <a class="btn btn-info mr-1" href="/tags" role="button"
       >Cancel</a
     >
-    <button type="submit" class="btn btn-success">Add</button>
+    <button type="submit" class="btn btn-success">Edit</button>
   </div>
 </form>
 

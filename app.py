@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, request, redirect, render_template
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly'
@@ -160,3 +160,70 @@ def delete_post(post_id):
     db.session.commit()
 
     return redirect(f'/users/{user.id}')
+
+
+@app.route('/tags')
+def list_tags():
+    """Show list of available tags"""
+
+    tags = Tag.query.all()
+    return render_template('tags.html', tags=tags)
+
+
+@app.route('/tags/<int:tag_id>')
+def show_indiv_tag_detail(tag_id):
+    """Show detail page for individual tag"""
+
+    tag = Tag.query.get(tag_id)
+    return render_template('tag-show.html', tag=tag)
+
+
+@app.route('/tags/new')
+def show_new_tag_form():
+    """Show the form to add a new tag"""
+
+    return render_template('tag-form.html')
+
+
+@app.route('/tags', methods=['POST'])
+def process_add_tag_form():
+    """Proccess the add tag form and update database"""
+
+    name = request.form.get('tag_name')
+
+    tag = Tag(name=name)
+    db.session.add(tag)
+    db.session.commit()
+
+    return redirect('/tags')
+
+
+@app.route('/tags/<int:tag_id>/edit')
+def show_edit_form_for_tag(tag_id):
+    """Show the edit form for a tag"""
+
+    tag = Tag.query.get(tag_id)
+    return render_template('tag-edit.html', tag=tag)
+
+
+@app.route('/tags/<int:tag_id>/edit', methods=['POST'])
+def process_edit_tag_form(tag_id):
+    """Process the edit tag form and update the database"""
+
+    tag = Tag.query.get_or_404(tag_id)
+    tag.name = request.form.get('tag_name')
+
+    db.session.add(tag)
+    db.session.commit()
+    return redirect('/tags')
+
+
+@app.route('/tags/<int:tag_id>/delete', methods=['POST'])
+def delete_tag(tag_id):
+    """Delete a tag"""
+
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+
+    return redirect('/tags')
